@@ -29,10 +29,26 @@ def read_file():
 def build_frequency_table(text):
     return Counter(text)
 
+# Function to build the Huffman tree
+def build_huffman_tree(frequency_table):
+    priority_queue = [Node(char, freq) for char, freq in frequency_table.items()]
+    heapq.heapify(priority_queue)
+
+    while len(priority_queue) > 1:
+        left = heapq.heappop(priority_queue)
+        right = heapq.heappop(priority_queue)
+        merged = Node(None, left.freq + right.freq, left, right)
+        heapq.heappush(priority_queue, merged)
+
+    return priority_queue[0]  # Root of the Huffman Tree
+
 # Main Function
 if __name__ == "__main__":
     input_text = read_file()
-    #print("Input Text:", input_text)
+    print("Input Text:", input_text)
 
     frequency_table = build_frequency_table(input_text)
     print("Frequency Table:", frequency_table)
+
+    huffman_tree_root = build_huffman_tree(frequency_table)
+    print (" Huffman Tree Root:", huffman_tree_root.freq)
