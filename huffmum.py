@@ -1,5 +1,6 @@
 # Add Necessary 
 import heapq
+import math
 from collections import Counter
 from graphviz import Digraph
 
@@ -76,7 +77,7 @@ def encode_message(text: str, codes: dict) -> str:
     return "".join(encoded)
 
 # Function to get compression statistics
-def compression_ratio(original_text: str, encoded_text: str) -> dict:
+def compression_ratio(original_text: str, encoded_text: str, frequency_table) -> dict:
     original_text_size = len(original_text) * 8  # in ASCII
     encoded_text_size = len(encoded_text)  # in bits
 
@@ -85,9 +86,12 @@ def compression_ratio(original_text: str, encoded_text: str) -> dict:
     bits_saved = original_text_size - encoded_text_size
     avg_bits_per_char = encoded_text_size / len(original_text)
 
+    entropy = calculate_entropy(frequency_table, len(original_text))
+
     compression_ratio = round(compression_ratio, 2)
     comp_percent = round(comp_percent, 2)
     avg_bits_per_char = round(avg_bits_per_char, 2)
+    entropy = round(entropy, 4)
 
     return {
         "original_bits": original_text_size,
@@ -95,7 +99,8 @@ def compression_ratio(original_text: str, encoded_text: str) -> dict:
         "compression_ratio": compression_ratio,
         "compression_percent_(%)": comp_percent,
         "bits_saved": bits_saved,
-        "avg_bits_per_char": avg_bits_per_char
+        "avg_bits_per_char": avg_bits_per_char,
+        "entropy_bits_per_char": entropy
     }
 
 # Function to visualize Huffman Tree using graphviz
@@ -131,6 +136,13 @@ def visualize_huffman_tree(root):
     dot.render("huffman_tree", format="png", cleanup=True)
     print("Huffman tree saved as huffman_tree.png")
 
+def calculate_entropy(frequency_table, total_chars):
+    entropy = 0
+    for freq in frequency_table.values():
+        p = freq / total_chars
+        entropy += p * math.log2(1 / p)  # same as -p*log2(p)
+    return entropy
+
 # Function to display menu and options
 def menu():
     print("Huffman Coding Compression:")
@@ -150,7 +162,7 @@ if __name__ == "__main__":
     huffman_tree_root = build_huffman_tree(frequency_table)
     codes = create_codes(huffman_tree_root)
     encoded_message = encode_message(input_text, codes)
-    status = compression_ratio(input_text, encoded_message)
+    status = compression_ratio(input_text, encoded_message, frequency_table)
 
     # Display Menu
     menu()
