@@ -1,6 +1,7 @@
 # Add Necessary 
 import heapq
 from collections import Counter
+from graphviz import Digraph
 
 # Class for Huffman Tree Node
 class Node:
@@ -97,6 +98,39 @@ def compression_ratio(original_text: str, encoded_text: str) -> dict:
         "avg_bits_per_char": avg_bits_per_char
     }
 
+# Function to visualize Huffman Tree using graphviz
+def visualize_huffman_tree(root):
+    dot = Digraph()
+    
+    def add_nodes(node, name="root"):
+        if node is None:
+            return
+
+        # leaf node → actual character → box
+        if node.char is not None:
+            label = f"{repr(node.char)}:{node.freq}"
+            dot.node(name, label, shape="box")
+        else:
+            # internal node → circle
+            label = f"*:{node.freq}"
+            dot.node(name, label, shape="circle")
+
+        if node.left:
+            left_name = name + "0"
+            dot.edge(name, left_name, label="0")
+            add_nodes(node.left, left_name)
+
+        if node.right:
+            right_name = name + "1"
+            dot.edge(name, right_name, label="1")
+            add_nodes(node.right, right_name)
+
+    add_nodes(root)
+
+    # Render the tree to a file
+    dot.render("huffman_tree", format="png", cleanup=True)
+    print("Huffman tree saved as huffman_tree.png")
+
 # Function to display menu and options
 def menu():
     print("Huffman Coding Compression:")
@@ -142,7 +176,6 @@ if __name__ == "__main__":
             for key, value in status.items():
                 print(f"{key.replace('_', ' ').title()}: {value}")
         elif choice == '6':
-            print("Exiting...")
-            break
+            visualize_huffman_tree(huffman_tree_root)
         else:
             print("Invalid choice. Please try again.")
