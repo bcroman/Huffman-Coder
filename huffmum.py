@@ -19,7 +19,7 @@ class Node:
 # Function to read txt file and output message
 def read_file():
     try: # Read File
-        with open("./dataset/demofile.txt", "r") as text:
+        with open("./dataset/koran.txt", "r") as text:
             input_text = text.read()
             return input_text
     except FileNotFoundError: #Error Handling for Missing File
@@ -68,18 +68,40 @@ def create_codes(root: Node) -> dict:
 
 # Function to encode the input text
 def encode_message(text: str, codes: dict) -> str:
-    """
-    Encode the input text into a Huffman-encoded binary string.
-    """
     encoded = []
+    # Encode each character
     for char in text:
         encoded.append(codes[char])
     return "".join(encoded)
 
+# Function to get compression statistics
+def compression_ratio(original_text: str, encoded_text: str) -> dict:
+    original_text_size = len(original_text) * 8  # in ASCII
+    encoded_text_size = len(encoded_text)  # in bits
+
+    compression_ratio = original_text_size / encoded_text_size
+    comp_percent = (original_text_size - encoded_text_size) / original_text_size * 100
+    bits_saved = original_text_size - encoded_text_size
+    avg_bits_per_char = encoded_text_size / len(original_text)
+
+    compression_ratio = round(compression_ratio, 2)
+    comp_percent = round(comp_percent, 2)
+    avg_bits_per_char = round(avg_bits_per_char, 2)
+
+    return {
+        "original_bits": original_text_size,
+        "encoded_bits": encoded_text_size,
+        "compression_ratio": compression_ratio,
+        "compression_percent_(%)": comp_percent,
+        "bits_saved": bits_saved,
+        "avg_bits_per_char": avg_bits_per_char
+    }
+
+
 # Main Function
 if __name__ == "__main__":
     input_text = read_file()
-    #print("Input Text:", input_text)
+    print("Input Text:", input_text)
 
     frequency_table = build_frequency_table(input_text)
     print("Frequency Table:", frequency_table)
@@ -98,5 +120,11 @@ if __name__ == "__main__":
     print("\nEncoded Message:")
     print(encoded_message)
     print("\nEncoded Message Length:", len(encoded_message), "bits")
+
+    status = compression_ratio(input_text, encoded_message)
+    print("\nCompression Statistics:")
+    for key, value in status.items():
+        print(f"{key.replace('_', ' ').title()}: {value}")
+
 
 
