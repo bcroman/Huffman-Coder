@@ -19,7 +19,7 @@ class Node:
 # Function to read txt file and output message
 def read_file():
     try: # Read File
-        with open("./dataset/koran.txt", "r") as text:
+        with open("./dataset/demofile.txt", "r") as text:
             input_text = text.read()
             return input_text
     except FileNotFoundError: #Error Handling for Missing File
@@ -97,34 +97,52 @@ def compression_ratio(original_text: str, encoded_text: str) -> dict:
         "avg_bits_per_char": avg_bits_per_char
     }
 
+# Function to display menu and options
+def menu():
+    print("Huffman Coding Compression:")
+    print("1. Print Input Text")
+    print("2. Frequency Table")
+    print("3. Huffman Codes")
+    print("4. Encoded Message")
+    print("5. Compression Statistics")
+    print("6. Exit")
+
+
 
 # Main Function
 if __name__ == "__main__":
     input_text = read_file()
-    print("Input Text:", input_text)
-
     frequency_table = build_frequency_table(input_text)
-    print("Frequency Table:", frequency_table)
-
     huffman_tree_root = build_huffman_tree(frequency_table)
-    print (" Huffman Tree Root:", huffman_tree_root.freq)
-
     codes = create_codes(huffman_tree_root)
-
-    print("\nHuffman Codes:")
-    for char, code in codes.items():
-        printable = char if char != " " else "[space]"
-        print(f"{printable!r}: {code}")
-
     encoded_message = encode_message(input_text, codes)
-    print("\nEncoded Message:")
-    print(encoded_message)
-    print("\nEncoded Message Length:", len(encoded_message), "bits")
-
     status = compression_ratio(input_text, encoded_message)
-    print("\nCompression Statistics:")
-    for key, value in status.items():
-        print(f"{key.replace('_', ' ').title()}: {value}")
 
+    # Display Menu
+    menu()
 
-
+    # User Interaction Loop
+    while True:
+        choice = input("\nEnter your choice (1-6): ")
+        if choice == '1':
+            print("\nInput Text:\n", input_text)
+        elif choice == '2':
+            print("\nFrequency Table:")
+            for char, freq in frequency_table.items():
+                print(f"'{char}': {freq}")
+        elif choice == '3':
+            print("\nHuffman Codes:")
+            for char, code in codes.items():
+                print(f"'{char}': {code}")
+        elif choice == '4':
+            print("\nEncoded Message:\n", encoded_message)
+            print(f"\nTotal bits in encoded message: {len(encoded_message)}")
+        elif choice == '5':
+            print("\nCompression Statistics:")
+            for key, value in status.items():
+                print(f"{key.replace('_', ' ').title()}: {value}")
+        elif choice == '6':
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice. Please try again.")
