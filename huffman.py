@@ -205,9 +205,9 @@ def main():
                 print(f"'{char}': {freq}")
         elif choice == '3':
             print("\nHuffman Codes:")
-            for char, freq in frequency_table.items():
+            for char, code in frequency_table.items():
                 display_char = char if char != " " else "<space>"
-                print(f"{display_char}: {freq}")
+                print(f"{display_char}: {code}")
         elif choice == '4':
             print("\nEncoded Message: ", encoded_message)
             print(f"\nTotal bits in encoded message: {len(encoded_message)}")
@@ -231,3 +231,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
